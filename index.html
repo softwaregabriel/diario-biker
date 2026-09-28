@@ -11,8 +11,45 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
   <title>Diario Casal na Rota — V1.2</title>
+
+<style id="autoral-splash-css">
+#autoral-splash{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;text-align:center;background:#0b1220;color:#fff;padding:24px;box-sizing:border-box;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+#autoral-splash.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
+#autoral-splash .splash-inner{max-width:360px;animation:autoralSplashIn .65s ease both}
+#autoral-splash .splash-logo{width:min(170px,46vw);height:min(170px,46vw);object-fit:contain;margin:0 auto 18px;border-radius:50%}
+#autoral-splash .splash-title{margin:0;font-size:clamp(24px,7vw,34px);line-height:1.1;font-weight:800}
+#autoral-splash .splash-phrase{margin:14px auto 10px;max-width:330px;font-size:16px;line-height:1.45;opacity:.9}
+#autoral-splash .splash-author{margin:12px 0 0;font-size:13px;opacity:.72}
+@keyframes autoralSplashIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){#autoral-splash .splash-inner{animation:none}#autoral-splash{transition:none}}
+</style>
+
+<meta name="author" content="Gabriel Ramos">
 </head>
 <body>
+
+<div id="autoral-splash" aria-label="Diário Casal na Rota">
+<div class="splash-inner">
+<img class="splash-logo" src="./icons/icon-512.png" alt="Diário Casal na Rota">
+<h1 class="splash-title">Diário Casal na Rota</h1>
+<p class="splash-phrase">“Enquanto houver estrada, teremos histórias para viver juntos.”</p>
+<p class="splash-author">Desenvolvido por Gabriel Ramos · © 2026</p>
+</div>
+</div>
+<script id="autoral-splash-js">
+(function(){
+var s=document.getElementById('autoral-splash'); if(!s)return;
+var start=Date.now(), minimum=2200, done=false;
+function hide(){
+ if(done)return; done=true;
+ var wait=Math.max(0,minimum-(Date.now()-start));
+ setTimeout(function(){s.classList.add('is-hidden');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},500)},wait);
+}
+if(document.readyState==='complete')hide();else window.addEventListener('load',hide,{once:true});
+setTimeout(hide,3500);
+})();
+</script>
+
 <div id="splash" aria-label="Abrindo Diário Casal na Rota">
   <div class="splash-inner">
     <img src="icons/icon-192.png" alt="Diário Casal na Rota">
