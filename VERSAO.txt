@@ -1,2 +1,2 @@
-DIÁRIO CASAL NA ROTA — V1.5.7
-Carimbos com estados Pendente e Concluído.
+DIÁRIO CASAL NA ROTA — V1.5.8
+Carimbos pendentes/concluídos + ícone de abertura com recorte transparente e suave.
