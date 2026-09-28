@@ -18,3 +18,16 @@
 @media(max-width:760px){.bottom-nav .nav-item{width:16.66%}.bottom-nav .nav-item small{font-size:8px}.bottom-nav .nav-item span{font-size:17px}.bottom-nav .nav-add{flex:0 0 54px}.route-tabs button{font-size:9px}}
 
 .route-nav-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center}.route-nav-icon img{width:30px;height:30px;object-fit:contain;display:block}.route-title{display:flex;align-items:center;gap:12px}.route-title>img{width:48px;height:48px;object-fit:contain;display:block}.route-title h2{margin:0}
+
+/* V1.5.5 - bottom navigation mobile alignment */
+.bottom-nav{box-sizing:border-box;width:100%;max-width:760px;height:calc(72px + env(safe-area-inset-bottom));padding:8px 8px env(safe-area-inset-bottom);gap:4px;align-items:center;overflow:hidden}
+.bottom-nav .nav-item{width:auto;flex:1 1 0;min-width:0;box-sizing:border-box}
+.bottom-nav .nav-add{width:48px;height:48px;flex:0 0 48px;box-sizing:border-box}
+.bottom-nav .nav-item span{line-height:20px}
+.bottom-nav .nav-item small{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:390px){
+ .bottom-nav{height:calc(70px + env(safe-area-inset-bottom));padding-left:5px;padding-right:5px;gap:2px}
+ .bottom-nav .nav-item span{font-size:16px}
+ .bottom-nav .nav-item small{font-size:8px}
+ .bottom-nav .nav-add{width:44px;height:44px;flex-basis:44px}
+}
