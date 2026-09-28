@@ -1,79 +1,45 @@
-const KEY="diario_biker_v1";
-let trips=JSON.parse(localStorage.getItem(KEY)||"[]");
+const TRIP_KEY="diario_biker_v1";
+const BIKE_KEY="diario_casal_na_rota_motos_v1";
+let trips=JSON.parse(localStorage.getItem(TRIP_KEY)||"[]").map(t=>({...t,status:t.status||"realizada",bikeId:t.bikeId||""}));
+let bikes=JSON.parse(localStorage.getItem(BIKE_KEY)||"[]");
+let tripFilter="todas";
+let bikeFilter="comigo";
+let tripStatus="realizada";
 
 function money(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
-function save(){localStorage.setItem(KEY,JSON.stringify(trips));render();}
-function totalSpent(){return trips.reduce((s,t)=>s+(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0),0);}
-function totalKm(){return trips.reduce((s,t)=>s+Number(t.km||0),0);}
-
-function showScreen(name){
-  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
-  document.getElementById("screen-"+name).classList.add("active");
-  document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.screen===name));
-  window.scrollTo({top:0,behavior:"smooth"});
-  render();
+function saveTrips(){localStorage.setItem(TRIP_KEY,JSON.stringify(trips));}
+function saveBikes(){localStorage.setItem(BIKE_KEY,JSON.stringify(bikes));}
+function showScreen(name){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById("screen-"+name).classList.add("active");document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.screen===name));window.scrollTo({top:0,behavior:"smooth"});render();}
+function closeModal(id){document.getElementById(id).classList.add("hidden");}
+function openTripModal(status="realizada"){
+  document.getElementById("tripForm").reset();document.getElementById("tripDate").value=new Date().toISOString().slice(0,10);document.getElementById("expenses").innerHTML="";addExpense();setTripStatus(status);populateBikeSelect("tripBike");
+  document.getElementById("tripModal").classList.remove("hidden");updateTripEstimate();
 }
+function setTripStatus(status){tripStatus=status;document.getElementById("tripStatusDone").classList.toggle("active",status==="realizada");document.getElementById("tripStatusPlan").classList.toggle("active",status==="planejada");document.getElementById("tripModalTitle").textContent=status==="realizada"?"Nova viagem":"Planejar viagem";document.getElementById("tripModalSub").textContent=status==="realizada"?"Registre sua aventura":"Deixe a próxima rota preparada";document.getElementById("tripEstimateBox").classList.toggle("hidden",status!=="planejada");}
+function addExpense(){const row=document.createElement("div");row.className="expense-row";row.innerHTML=`<input class="expense-name" placeholder="Ex.: Combustível"><input class="expense-value" type="number" min="0" step="0.01" placeholder="R$"><button type="button" onclick="this.parentElement.remove()">×</button>`;document.getElementById("expenses").appendChild(row);}
+function openBikeModal(){document.getElementById("bikeForm").reset();document.getElementById("bikeModal").classList.remove("hidden");}
 
-function openNewTrip(){
-  document.getElementById("tripForm").reset();
-  document.getElementById("tripDate").value=new Date().toISOString().slice(0,10);
-  document.getElementById("expenses").innerHTML="";
-  addExpense();
-  document.getElementById("tripModal").classList.remove("hidden");
-}
-function closeModal(){document.getElementById("tripModal").classList.add("hidden")}
+document.getElementById("tripForm").addEventListener("submit",e=>{e.preventDefault();const expenses=[...document.querySelectorAll(".expense-row")].map(r=>({name:r.querySelector(".expense-name").value.trim()||"Outros",value:Number(r.querySelector(".expense-value").value||0)})).filter(x=>x.value>0);const bikeId=document.getElementById("tripBike").value;trips.unshift({id:Date.now(),name:document.getElementById("tripName").value.trim(),date:document.getElementById("tripDate").value,km:Number(document.getElementById("tripKm").value||0),origin:document.getElementById("tripOrigin").value.trim(),destination:document.getElementById("tripDestination").value.trim(),notes:document.getElementById("tripNotes").value.trim(),expenses,status:tripStatus,bikeId});saveTrips();closeModal("tripModal");tripFilter=tripStatus;showScreen("trips");});
 
-function addExpense(){
-  const row=document.createElement("div");
-  row.className="expense-row";
-  row.innerHTML=`<input class="expense-name" placeholder="Ex.: Combustível"><input class="expense-value" type="number" min="0" step="0.01" placeholder="R$"><button type="button" onclick="this.parentElement.remove()">×</button>`;
-  document.getElementById("expenses").appendChild(row);
-}
+document.getElementById("bikeForm").addEventListener("submit",e=>{e.preventDefault();bikes.unshift({id:Date.now(),name:document.getElementById("bikeName").value.trim(),year:document.getElementById("bikeYear").value.trim(),consumption:Number(document.getElementById("bikeConsumption").value||0),status:document.getElementById("bikeStatus").value,acquired:document.getElementById("bikeAcquired").value,sold:document.getElementById("bikeSold").value,purchase:Number(document.getElementById("bikePurchase").value||0),sale:Number(document.getElementById("bikeSale").value||0),notes:document.getElementById("bikeNotes").value.trim()});saveBikes();closeModal("bikeModal");render();});
 
-document.getElementById("tripForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const expenses=[...document.querySelectorAll(".expense-row")].map(r=>({
-    name:r.querySelector(".expense-name").value.trim()||"Outros",
-    value:Number(r.querySelector(".expense-value").value||0)
-  })).filter(x=>x.value>0);
-  trips.unshift({
-    id:Date.now(),
-    name:document.getElementById("tripName").value.trim(),
-    date:document.getElementById("tripDate").value,
-    km:Number(document.getElementById("tripKm").value||0),
-    origin:document.getElementById("tripOrigin").value.trim(),
-    destination:document.getElementById("tripDestination").value.trim(),
-    notes:document.getElementById("tripNotes").value.trim(),
-    expenses
-  });
-  save(); closeModal(); showScreen("trips");
-});
-
-function tripCard(t){
-  const spent=(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0);
-  const route=[t.origin,t.destination].filter(Boolean).join(" → ")||"Rota não informada";
-  return `<article class="trip-card">
-    <div class="title">${escapeHtml(t.name)}</div>
-    <div class="route">${escapeHtml(route)}</div>
-    <div class="trip-meta"><span>🛣️ ${Number(t.km||0).toLocaleString("pt-BR")} km</span><span>💰 ${money(spent)}</span><span>📅 ${formatDate(t.date)}</span></div>
-  </article>`;
-}
+document.getElementById("tripBike").addEventListener("change",updateTripEstimate);
+document.getElementById("tripKm").addEventListener("input",updateTripEstimate);
+function populateBikeSelect(id){const s=document.getElementById(id);const opts=bikes.filter(b=>b.status!=="vendida");s.innerHTML=`<option value="">Selecionar moto</option>`+opts.map(b=>`<option value="${b.id}">${escapeHtml(b.name)}${b.consumption?` • ${b.consumption} km/L`:""}</option>`).join("");}
+function bikeById(id){return bikes.find(b=>String(b.id)===String(id));}
+function updateTripEstimate(){const bike=bikeById(document.getElementById("tripBike").value);const km=Number(document.getElementById("tripKm").value||0);const box=document.getElementById("tripEstimateBox");if(tripStatus!=="planejada"||!bike||!bike.consumption||!km){box.classList.add("hidden");return}const fuelPrice=Number(localStorage.getItem("casal_fuel_price")||6.20);const liters=km/bike.consumption;const fuel=liters*fuelPrice;document.getElementById("tripEstimatedFuel").textContent=money(fuel);document.getElementById("tripEstimatedTolls").textContent="Cadastre na calculadora";document.getElementById("tripEstimatedTotal").textContent=money(fuel);box.classList.remove("hidden");}
+function setTripFilter(f){tripFilter=f;document.querySelectorAll(".segmented button").forEach(b=>b.classList.remove("active"));document.getElementById(f==="todas"?"filterAll":f==="realizada"?"filterDone":"filterPlan").classList.add("active");renderTrips();}
+function setBikeFilter(f){bikeFilter=f;document.querySelectorAll(".bike-tabs button").forEach(b=>b.classList.remove("active"));const idx={comigo:0,vendida:1,planejada:2}[f];document.querySelectorAll(".bike-tabs button")[idx].classList.add("active");renderBikes();}
+function tripCard(t){const spent=(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0);const route=[t.origin,t.destination].filter(Boolean).join(" → ")||"Rota não informada";const bike=bikeById(t.bikeId);return `<article class="trip-card"><span class="trip-status ${t.status==="planejada"?"status-planejada":"status-realizada"}">${t.status==="planejada"?"📅 PRÓXIMA VIAGEM":"✓ REALIZADA"}</span><div class="title">${escapeHtml(t.name)}</div><div class="route">${escapeHtml(route)}</div><div class="trip-meta"><span>🛣️ ${Number(t.km||0).toLocaleString("pt-BR")} km</span><span>📅 ${formatDate(t.date)}</span>${bike?`<span>🏍️ ${escapeHtml(bike.name)}</span>`:""}${spent?`<span>💰 ${money(spent)}</span>`:""}</div>${t.status==="planejada"&&t.notes?`<div class="bike-details">${escapeHtml(t.notes)}</div>`:""}</article>`;}
+function renderTrips(){const all=document.getElementById("allTrips");const filtered=trips.filter(t=>tripFilter==="todas"||t.status===tripFilter).sort((a,b)=>String(a.date).localeCompare(String(b.date))*(tripFilter==="planejada"?1:-1));document.getElementById("tripSummary").textContent=`${filtered.length} ${filtered.length===1?"viagem":"viagens"} nesta categoria`;all.innerHTML=filtered.length?filtered.map(tripCard).join(""):`<div class="empty">Nenhuma viagem nesta categoria.</div>`;}
+function renderBikes(){const list=document.getElementById("bikeList");const arr=bikes.filter(b=>b.status===bikeFilter);list.innerHTML=arr.length?arr.map(b=>`<article class="bike-card"><div class="bike-top"><div><span class="bike-status ${b.status==="comigo"?"status-realizada":b.status==="planejada"?"status-planejada":""}">${b.status==="comigo"?"🟢 COMIGO":b.status==="vendida"?"🔴 VENDIDA":"🟡 PLANEJADA"}</span><div class="title">${escapeHtml(b.name)}</div></div>${b.year?`<b>${escapeHtml(b.year)}</b>`:""}</div><div class="bike-details">${b.consumption?`⛽ Média: ${b.consumption} km/L<br>`:""}${b.purchase?`💰 Compra: ${money(b.purchase)}<br>`:""}${b.sale?`💵 Venda: ${money(b.sale)}<br>`:""}${b.notes?escapeHtml(b.notes):""}</div></article>`).join(""):`<div class="empty">Nenhuma moto cadastrada aqui.<br><br><button class="ghost-btn" onclick="openBikeModal()">＋ Cadastrar moto</button></div>`;}
+function calculateTrip(){const km=Number(document.getElementById("calcKm").value||0),cons=Number(document.getElementById("calcConsumption").value||0),price=Number(document.getElementById("calcFuelPrice").value||0),tolls=Number(document.getElementById("calcTolls").value||0);localStorage.setItem("casal_fuel_price",price);const liters=cons?km/cons:0,fuel=liters*price,total=fuel+tolls;document.getElementById("calcLiters").textContent=liters.toLocaleString("pt-BR",{maximumFractionDigits:1})+" L";document.getElementById("calcFuel").textContent=money(fuel);document.getElementById("calcTollResult").textContent=money(tolls);document.getElementById("calcTotal").textContent=money(total);}
+function updateCalcDefaults(){const b=bikeById(document.getElementById("calcBike").value);if(b?.consumption)document.getElementById("calcConsumption").value=b.consumption;calculateTrip();}
+function useCalcForTrip(){const km=document.getElementById("calcKm").value;const bikeId=document.getElementById("calcBike").value;openTripModal("planejada");document.getElementById("tripKm").value=km;document.getElementById("tripBike").value=bikeId;updateTripEstimate();showScreen("trips");document.getElementById("tripModal").classList.remove("hidden");}
+function nextPlanned(){return trips.filter(t=>t.status==="planejada"&&t.date).sort((a,b)=>a.date.localeCompare(b.date))[0];}
+function renderHome(){const planned=trips.filter(t=>t.status==="planejada"),done=trips.filter(t=>t.status!=="planejada"),km=done.reduce((s,t)=>s+Number(t.km||0),0),spent=done.reduce((s,t)=>s+(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0),0);document.getElementById("totalKm").textContent=km.toLocaleString("pt-BR")+" km";document.getElementById("totalTrips").textContent=done.length;document.getElementById("totalSpent").textContent=money(spent);document.getElementById("plannedTrips").textContent=planned.length;const n=nextPlanned();document.getElementById("nextTrip").innerHTML=n?`<div class="next-highlight"><div class="date">${formatDate(n.date)}</div><h3>${escapeHtml(n.name)}</h3><p>${escapeHtml([n.origin,n.destination].filter(Boolean).join(" → ")||"Rota ainda não informada")}</p></div>`:`<div class="empty">Nenhuma próxima viagem cadastrada ainda. 🗺️</div>`;document.getElementById("recentTrips").innerHTML=done.length?done.slice(0,3).map(tripCard).join(""):`<div class="empty">Ainda não há viagens realizadas.</div>`;}
+function render(){renderHome();renderTrips();renderBikes();populateBikeSelect("calcBike");calculateTrip();document.getElementById("statsKm").textContent=trips.filter(t=>t.status!=="planejada").reduce((s,t)=>s+Number(t.km||0),0).toLocaleString("pt-BR")+" km";document.getElementById("statsTrips").textContent=trips.filter(t=>t.status!=="planejada").length;document.getElementById("statsSpent").textContent=money(trips.filter(t=>t.status!=="planejada").reduce((s,t)=>s+(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0),0));document.getElementById("statsPlanned").textContent=trips.filter(t=>t.status==="planejada").length;}
 function formatDate(d){if(!d)return"--";const [y,m,day]=d.split("-");return`${day}/${m}/${y}`;}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
-
-function render(){
-  const km=totalKm(), spent=totalSpent();
-  document.getElementById("totalKm").textContent=km.toLocaleString("pt-BR")+" km";
-  document.getElementById("totalTrips").textContent=trips.length;
-  document.getElementById("totalSpent").textContent=money(spent);
-  document.getElementById("totalWins").textContent="0";
-  document.getElementById("statsKm").textContent=km.toLocaleString("pt-BR")+" km";
-  document.getElementById("statsTrips").textContent=trips.length;
-  document.getElementById("statsSpent").textContent=money(spent);
-  const recent=document.getElementById("recentTrips"), all=document.getElementById("allTrips");
-  recent.innerHTML=trips.length?trips.slice(0,3).map(tripCard).join(""):`<div class="empty">Ainda não há viagens registradas.<br><br>Comece sua primeira aventura. 🏍️</div>`;
-  all.innerHTML=trips.length?trips.map(tripCard).join(""):`<div class="empty">Nenhuma viagem registrada ainda.</div>`;
-}
 render();
-
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));

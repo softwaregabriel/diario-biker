@@ -10,103 +10,135 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
-  <title>Diario Casal na Rota</title>
+  <title>Diario Casal na Rota — V1.1</title>
 </head>
 <body>
-  <div id="app">
-    <header class="topbar">
-      <div>
-        <span class="eyebrow">DIARIO CASAL NA ROTA</span>
-        <h1>Suas estradas.<br><span>Suas histórias.</span></h1>
-      </div>
-      <img class="brand-logo" src="icons/icon-192.png" alt="Diario Casal na Rota">
-    </header>
-
-    <main id="screen-home" class="screen active">
-      <section class="hero-card">
-        <div>
-          <small>KM RODADOS</small>
-          <strong id="totalKm">0 km</strong>
-        </div>
-        <div class="hero-divider"></div>
-        <div>
-          <small>VIAGENS</small>
-          <strong id="totalTrips">0</strong>
-        </div>
-      </section>
-
-      <section class="stats-grid">
-        <div class="stat-card"><span>💰</span><small>GASTOS</small><b id="totalSpent">R$ 0,00</b></div>
-        <div class="stat-card"><span>🏆</span><small>CONQUISTAS</small><b id="totalWins">0</b></div>
-      </section>
-
-      <button class="primary-btn" onclick="openNewTrip()">＋ Nova viagem</button>
-
-      <section class="section-head">
-        <h2>Últimas viagens</h2>
-        <button onclick="showScreen('trips')">Ver todas</button>
-      </section>
-      <div id="recentTrips" class="trip-list"></div>
-    </main>
-
-    <main id="screen-trips" class="screen">
-      <div class="page-head"><h2>Minhas viagens</h2><button class="mini-btn" onclick="openNewTrip()">＋</button></div>
-      <div id="allTrips" class="trip-list"></div>
-    </main>
-
-    <main id="screen-route" class="screen">
-      <div class="page-head"><h2>Rota Biker</h2></div>
-      <div class="route-empty">
-        <div class="big-icon">🏆</div>
-        <h3>Suas conquistas começam aqui</h3>
-        <p>Em breve vamos registrar monumentos, mirantes, cachoeiras, estradas especiais e outros pontos marcantes das suas viagens.</p>
-      </div>
-    </main>
-
-    <main id="screen-stats" class="screen">
-      <div class="page-head"><h2>Estatísticas</h2></div>
-      <div class="stats-large">
-        <div><span>🛣️</span><small>KM TOTAIS</small><b id="statsKm">0 km</b></div>
-        <div><span>🏍️</span><small>VIAGENS</small><b id="statsTrips">0</b></div>
-        <div><span>💸</span><small>GASTO TOTAL</small><b id="statsSpent">R$ 0,00</b></div>
-        <div><span>📍</span><small>CIDADES</small><b>0</b></div>
-      </div>
-    </main>
-
-    <nav class="bottom-nav">
-      <button class="nav-item active" data-screen="home" onclick="showScreen('home')"><span>⌂</span><small>Início</small></button>
-      <button class="nav-item" data-screen="trips" onclick="showScreen('trips')"><span>🛣️</span><small>Viagens</small></button>
-      <button class="nav-add" onclick="openNewTrip()">＋</button>
-      <button class="nav-item" data-screen="route" onclick="showScreen('route')"><span>🏆</span><small>Rota Biker</small></button>
-      <button class="nav-item" data-screen="stats" onclick="showScreen('stats')"><span>📊</span><small>Dados</small></button>
-    </nav>
-  </div>
-
-  <div id="tripModal" class="modal hidden">
-    <div class="modal-box">
-      <div class="modal-head"><h2>Nova viagem</h2><button onclick="closeModal()">×</button></div>
-      <form id="tripForm">
-        <label>Nome da viagem<input id="tripName" required placeholder="Ex.: Serra da Mantiqueira"></label>
-        <div class="two-cols">
-          <label>Data<input id="tripDate" type="date" required></label>
-          <label>KM percorridos<input id="tripKm" type="number" min="0" step="0.1" placeholder="Ex.: 320"></label>
-        </div>
-        <div class="two-cols">
-          <label>Origem<input id="tripOrigin" placeholder="Jaú/SP"></label>
-          <label>Destino<input id="tripDestination" placeholder="Campos do Jordão/SP"></label>
-        </div>
-        <label>Observações<textarea id="tripNotes" placeholder="Como foi a viagem?"></textarea></label>
-
-        <div class="expense-box">
-          <div class="section-head"><h3>Gastos</h3><button type="button" onclick="addExpense()">＋ Adicionar</button></div>
-          <div id="expenses"></div>
-        </div>
-
-        <button class="primary-btn" type="submit">Salvar viagem</button>
-      </form>
+<div id="app">
+  <header class="topbar">
+    <div>
+      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.1</span>
+      <h1>Suas estradas.<br><span>Suas histórias.</span></h1>
     </div>
-  </div>
+    <img class="brand-logo" src="icons/icon-192.png" alt="Diario Casal na Rota">
+  </header>
 
-  <script src="app.js"></script>
+  <main id="screen-home" class="screen active">
+    <section class="hero-card">
+      <div><small>KM RODADOS</small><strong id="totalKm">0 km</strong></div>
+      <div class="hero-divider"></div>
+      <div><small>VIAGENS</small><strong id="totalTrips">0</strong></div>
+    </section>
+    <section class="stats-grid">
+      <div class="stat-card"><span>💰</span><small>GASTOS REAIS</small><b id="totalSpent">R$ 0,00</b></div>
+      <div class="stat-card"><span>📅</span><small>PRÓXIMAS</small><b id="plannedTrips">0</b></div>
+    </section>
+    <button class="primary-btn" onclick="openTripModal('realizada')">＋ Registrar viagem</button>
+    <section class="quick-grid">
+      <button class="quick-card" onclick="showScreen('trips'); setTripFilter('realizada')"><b>🏍️ Realizadas</b><small>Histórico das aventuras</small></button>
+      <button class="quick-card" onclick="showScreen('trips'); setTripFilter('planejada')"><b>🗓️ Próximas</b><small>Viagens que ainda virão</small></button>
+      <button class="quick-card" onclick="showScreen('calculator')"><b>⛽ Calcular viagem</b><small>Combustível + pedágios</small></button>
+      <button class="quick-card" onclick="showScreen('bikes')"><b>🏍️ Minhas motos</b><small>Atual, vendidas e futuras</small></button>
+    </section>
+    <section class="section-head"><h2>Próxima viagem</h2><button onclick="showScreen('trips'); setTripFilter('planejada')">Ver todas</button></section>
+    <div id="nextTrip"></div>
+    <section class="section-head"><h2>Últimas realizadas</h2><button onclick="showScreen('trips'); setTripFilter('realizada')">Ver todas</button></section>
+    <div id="recentTrips" class="trip-list"></div>
+  </main>
+
+  <main id="screen-trips" class="screen">
+    <div class="page-head"><div><h2>Minhas viagens</h2><small id="tripSummary">Histórico e planejamento</small></div><button class="mini-btn" onclick="openTripModal('realizada')">＋</button></div>
+    <div class="segmented">
+      <button id="filterAll" class="active" onclick="setTripFilter('todas')">Todas</button>
+      <button id="filterDone" onclick="setTripFilter('realizada')">Realizadas</button>
+      <button id="filterPlan" onclick="setTripFilter('planejada')">Próximas</button>
+    </div>
+    <div id="allTrips" class="trip-list"></div>
+  </main>
+
+  <main id="screen-calculator" class="screen">
+    <div class="page-head"><div><h2>Previsão de gastos</h2><small>Planeje combustível e pedágios antes de sair</small></div></div>
+    <section class="calc-card">
+      <label>Moto<select id="calcBike" onchange="updateCalcDefaults()"></select></label>
+      <div class="two-cols">
+        <label>Distância total (km)<input id="calcKm" type="number" min="0" step="0.1" value="300" oninput="calculateTrip()"></label>
+        <label>Consumo (km/L)<input id="calcConsumption" type="number" min="0.1" step="0.1" value="25" oninput="calculateTrip()"></label>
+      </div>
+      <div class="two-cols">
+        <label>Preço combustível (R$/L)<input id="calcFuelPrice" type="number" min="0" step="0.01" value="6.20" oninput="calculateTrip()"></label>
+        <label>Pedágios (R$)<input id="calcTolls" type="number" min="0" step="0.01" value="0" oninput="calculateTrip()"></label>
+      </div>
+      <div class="calc-result">
+        <div><small>Litros estimados</small><b id="calcLiters">0 L</b></div>
+        <div><small>Combustível</small><b id="calcFuel">R$ 0,00</b></div>
+        <div><small>Pedágios</small><b id="calcTollResult">R$ 0,00</b></div>
+        <div class="total"><small>TOTAL ESTIMADO</small><strong id="calcTotal">R$ 0,00</strong></div>
+      </div>
+      <button class="primary-btn" onclick="useCalcForTrip()">＋ Criar viagem com esta previsão</button>
+    </section>
+    <div class="tip">💡 A distância deve ser a distância total planejada. Se você informar só a ida, o cálculo não vai inventar a volta.</div>
+  </main>
+
+  <main id="screen-bikes" class="screen">
+    <div class="page-head"><div><h2>Minhas motos</h2><small>Atual, antigas e as próximas</small></div><button class="mini-btn" onclick="openBikeModal()">＋</button></div>
+    <div class="bike-tabs"><button id="bikeCurrentTab" class="active" onclick="setBikeFilter('comigo')">Comigo</button><button onclick="setBikeFilter('vendida')">Vendidas</button><button onclick="setBikeFilter('planejada')">Planejadas</button></div>
+    <div id="bikeList" class="bike-list"></div>
+  </main>
+
+  <main id="screen-route" class="screen">
+    <div class="page-head"><h2>Rota Biker</h2></div>
+    <div class="route-empty"><div class="big-icon">🏆</div><h3>Suas conquistas começam aqui</h3><p>Em breve vamos registrar monumentos, mirantes, cachoeiras, estradas especiais e outros pontos marcantes das suas viagens.</p></div>
+  </main>
+
+  <main id="screen-stats" class="screen">
+    <div class="page-head"><h2>Estatísticas</h2></div>
+    <div class="stats-large">
+      <div><span>🛣️</span><small>KM REALIZADOS</small><b id="statsKm">0 km</b></div>
+      <div><span>🏍️</span><small>VIAGENS REALIZADAS</small><b id="statsTrips">0</b></div>
+      <div><span>💸</span><small>GASTO REAL</small><b id="statsSpent">R$ 0,00</b></div>
+      <div><span>📅</span><small>PLANEJADAS</small><b id="statsPlanned">0</b></div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-screen="home" onclick="showScreen('home')"><span>⌂</span><small>Início</small></button>
+    <button class="nav-item" data-screen="trips" onclick="showScreen('trips')"><span>🛣️</span><small>Viagens</small></button>
+    <button class="nav-add" onclick="openTripModal('realizada')">＋</button>
+    <button class="nav-item" data-screen="calculator" onclick="showScreen('calculator')"><span>⛽</span><small>Gastos</small></button>
+    <button class="nav-item" data-screen="bikes" onclick="showScreen('bikes')"><span>🏍️</span><small>Motos</small></button>
+  </nav>
+</div>
+
+<div id="tripModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head"><div><h2 id="tripModalTitle">Nova viagem</h2><small id="tripModalSub">Registre sua aventura</small></div><button onclick="closeModal('tripModal')">×</button></div>
+    <form id="tripForm">
+      <div class="status-toggle"><button type="button" id="tripStatusDone" class="active" onclick="setTripStatus('realizada')">✓ Realizada</button><button type="button" id="tripStatusPlan" onclick="setTripStatus('planejada')">📅 Vou realizar</button></div>
+      <label>Nome da viagem<input id="tripName" required placeholder="Ex.: Serra da Mantiqueira"></label>
+      <div class="two-cols"><label>Data<input id="tripDate" type="date" required></label><label>KM total<input id="tripKm" type="number" min="0" step="0.1" placeholder="Ex.: 320"></label></div>
+      <div class="two-cols"><label>Origem<input id="tripOrigin" placeholder="Jaú/SP"></label><label>Destino<input id="tripDestination" placeholder="Campos do Jordão/SP"></label></div>
+      <label>Moto<select id="tripBike"></select></label>
+      <div id="tripEstimateBox" class="estimate-box hidden"><b>Previsão automática</b><div><span>⛽ Combustível</span><strong id="tripEstimatedFuel">R$ 0,00</strong></div><div><span>🛣️ Pedágios</span><strong id="tripEstimatedTolls">R$ 0,00</strong></div><div><span>💰 Total previsto</span><strong id="tripEstimatedTotal">R$ 0,00</strong></div></div>
+      <label>Observações<textarea id="tripNotes" placeholder="Como foi ou como pretende ser a viagem?"></textarea></label>
+      <div class="expense-box"><div class="section-head"><h3>Gastos reais</h3><button type="button" onclick="addExpense()">＋ Adicionar</button></div><div id="expenses"></div></div>
+      <button class="primary-btn" type="submit">Salvar viagem</button>
+    </form>
+  </div>
+</div>
+
+<div id="bikeModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head"><div><h2>Nova moto</h2><small>Guarde o histórico da sua garagem</small></div><button onclick="closeModal('bikeModal')">×</button></div>
+    <form id="bikeForm">
+      <label>Marca e modelo<input id="bikeName" required placeholder="Ex.: Honda Twister 300F"></label>
+      <div class="two-cols"><label>Ano<input id="bikeYear" placeholder="2025/2025"></label><label>Consumo médio (km/L)<input id="bikeConsumption" type="number" min="0.1" step="0.1" placeholder="Ex.: 25"></label></div>
+      <label>Status<select id="bikeStatus"><option value="comigo">🟢 Está comigo</option><option value="vendida">🔴 Já foi vendida</option><option value="planejada">🟡 Ainda vou comprar</option></select></label>
+      <div class="two-cols"><label>Data de aquisição<input id="bikeAcquired" type="date"></label><label>Data da venda<input id="bikeSold" type="date"></label></div>
+      <div class="two-cols"><label>Valor pago (R$)<input id="bikePurchase" type="number" min="0" step="0.01"></label><label>Valor da venda (R$)<input id="bikeSale" type="number" min="0" step="0.01"></label></div>
+      <label>Observações<textarea id="bikeNotes" placeholder="Ex.: toda original, acessórios, planos futuros..."></textarea></label>
+      <button class="primary-btn" type="submit">Salvar moto</button>
+    </form>
+  </div>
+</div>
+<script src="app.js"></script>
 </body>
 </html>
