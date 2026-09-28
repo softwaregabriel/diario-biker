@@ -4,6 +4,6 @@
 // 3) Cole os dois valores abaixo.
 // NÃO coloque aqui a service_role key.
 window.DIARIO_SUPABASE_CONFIG = {
-  url: "https://ampflyteblgkcylsqtkw.supabase.co",
-  key: "sb_publishable_atIqIDdEr_9c7ah2tbnHwA_6BMqzwdw"
+  url: "COLE_AQUI_A_PROJECT_URL",
+  key: "COLE_AQUI_A_PUBLISHABLE_KEY"
 };

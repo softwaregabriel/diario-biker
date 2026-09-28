@@ -47,4 +47,21 @@ window.reloadAppData=function(){
   render();
 };
 render();
-if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+
+// Tela de abertura: mostra a logo rapidamente e entra no app sem exigir rolagem.
+window.addEventListener("load",()=>{
+  setTimeout(()=>document.getElementById("splash")?.classList.add("hide"),650);
+});
+
+// PWA: verifica uma versão nova sempre que o app abre/volta para a tela.
+if("serviceWorker" in navigator){
+  window.addEventListener("load",async()=>{
+    try{
+      const registration=await navigator.serviceWorker.register("sw.js");
+      await registration.update();
+      document.addEventListener("visibilitychange",()=>{
+        if(document.visibilityState==="visible") registration.update().catch(()=>{});
+      });
+    }catch(e){}
+  });
+}
