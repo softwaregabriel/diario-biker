@@ -61,3 +61,28 @@ create policy "casal bikes delete" on public.bikes for delete to authenticated u
 
 create index if not exists trips_user_id_idx on public.trips(user_id);
 create index if not exists bikes_user_id_idx on public.bikes(user_id);
+
+
+-- Rota Biker: carimbos pessoais por monumento
+create table if not exists public.route_stamps (
+  id text primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  monument_number integer not null,
+  stamped boolean not null default false,
+  stamped_at timestamptz,
+  updated_at timestamptz not null default now(),
+  unique(user_id, monument_number)
+);
+
+alter table public.route_stamps enable row level security;
+revoke all on table public.route_stamps from anon;
+grant select, insert, update, delete on table public.route_stamps to authenticated;
+drop policy if exists "casal route stamps select" on public.route_stamps;
+drop policy if exists "casal route stamps insert" on public.route_stamps;
+drop policy if exists "casal route stamps update" on public.route_stamps;
+drop policy if exists "casal route stamps delete" on public.route_stamps;
+create policy "casal route stamps select" on public.route_stamps for select to authenticated using ((select auth.uid()) = user_id);
+create policy "casal route stamps insert" on public.route_stamps for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "casal route stamps update" on public.route_stamps for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy "casal route stamps delete" on public.route_stamps for delete to authenticated using ((select auth.uid()) = user_id);
+create index if not exists route_stamps_user_id_idx on public.route_stamps(user_id);

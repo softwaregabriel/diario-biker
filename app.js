@@ -5,6 +5,59 @@ let bikes=JSON.parse(localStorage.getItem(BIKE_KEY)||"[]");
 let tripFilter="todas";
 let bikeFilter="comigo";
 let tripStatus="realizada";
+const ROUTE_KEY="diario_casal_na_rota_biker_v1";
+let routeFilter="todos";
+let routeSearch="";
+const ROTA_BIKER=[
+ [1,"Serpenteando Café","Bocaiúva do Sul — PR","carimbando"],[2,"Monumento 2","Localização em atualização","atualizacao"],
+ [3,"Mirante do 12","Lauro Müller — SC","carimbando"],[4,"Rota 370","Urubici — SC","carimbando"],[5,"Parada Rota 218","Carlópolis — PR","carimbando"],
+ [6,"Parada Rota Bike Café","Rio dos Cedros — SC","carimbando"],[7,"Container da Serra","Doutor Pedrinho — SC","carimbando"],[8,"Parada 261","Guapiara — SP","carimbando"],
+ [9,"Posto Rota 090","Piraí do Sul — PR","carimbando"],[10,"Terrasul Motos","Jaguarão — RS","carimbando"],[11,"Pad Bier Cervejaria","Paranoá — DF","carimbando"],
+ [12,"Centro Cultural Movimento","Socorro — SP","carimbando"],[13,"Rota 513","Ponta Grossa — PR","carimbando"],[14,"Parador 158","Itaara — RS","carimbando"],
+ [15,"Garimpo em Atividade","Ametista do Sul — RS","carimbando"],[16,"Bar Original – Pier SP-270","Piraju — SP","carimbando"],[17,"Armazém Canastra","Piumhi — MG","carimbando"],
+ [18,"Box 1200","Jundiaí — SP","carimbando"],[19,"Rancho Terra Crua","Salesópolis — SP","carimbando"],[20,"Casa Rural","Barra do Ribeiro — RS","carimbando"],
+ [21,"Parada Penhasco","Penha — SC","carimbando"],[22,"Restaurante Mata Virgem","Três Corações — MG","carimbando"],[23,"Bar do Hélio","Santo Antônio da Alegria — SP","carimbando"],
+ [24,"Pousada e Camping Poço do Caixão","Timbé do Sul — SC","carimbando"],[25,"Os Independentes","Barretos — SP","carimbando"],[26,"Restaurante Portal Grill","Porto União — SC","carimbando"],
+ [27,"Restaurante Pedra do Baú","São Bento do Sapucaí — SP","carimbando"],[28,"Hotel Barra Bonita","Barra Bonita — SP","carimbando"],[29,"Rancho Gastronomia e Cultura","São José do Barreiro — SP","carimbando"],
+ [30,"Drei Schritte Restô Bar","Katueté — Paraguai","carimbando"],[31,"Pro Tork","Siqueira Campos — PR","carimbando"],[32,"Hell's Dogs Motorcycle Bar","Foz do Iguaçu — PR","carimbando"],
+ [33,"Zapata Garage","Garça — SP","carimbando"],[34,"Parada da Búfala","Sete Barras — SP","carimbando"],[35,"Portal de São Lourenço","São Lourenço — MG","carimbando"],
+ [36,"Route 60","Goiás — GO","carimbando"],[37,"Bela Vista Mall","Conceição do Mato Dentro — MG","construcao"],[38,"MAPY","Mauá da Serra — PR","carimbando"],
+ [39,"MAR & SOL PRAIA HOTEL","Prado — BA","construcao"],[40,"QUIOSQUE ROMANO","Morro Redondo — RS","construcao"],[41,"ROTA 15","Casca — RS","construcao"],
+ [42,"TAPIOCA DO IRMÃO FIRMINO","Cajá — PB","construcao"],[43,"Parada Route","Rod. GO 139 Km 166 — São Miguel do Passa Quatro — GO","construcao"]
+].map(([numero,nome,local,status])=>({numero,nome,local,status}));
+let routeStamps=JSON.parse(localStorage.getItem(ROUTE_KEY)||"{}");
+function saveRouteStamps(){localStorage.setItem(ROUTE_KEY,JSON.stringify(routeStamps));if(window.cloudSyncNow)setTimeout(window.cloudSyncNow,150);}
+function setRouteFilter(f){routeFilter=f;document.querySelectorAll(".route-tabs button").forEach(b=>b.classList.toggle("active",b.dataset.filter===f));renderRoute();}
+function setRouteSearch(v){routeSearch=v||"";renderRoute();}
+function toggleRouteStamp(n){const k=String(n);routeStamps[k]=routeStamps[k]?false:new Date().toISOString();saveRouteStamps();renderRoute();}
+function routeStatusLabel(s){return s==="carimbando"?"🟢 Carimbando":s==="construcao"?"🟡 Em construção":"⚪ Localização em atualização";}
+function routeMapUrl(r){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(r.nome+", "+r.local);}
+function renderRoute(){
+ const list=document.getElementById("routeList");if(!list)return;
+ const q=routeSearch.trim().toLowerCase();
+ const filtered=ROTA_BIKER.filter(r=>{
+   const stamped=!!routeStamps[String(r.numero)];
+   const matchesFilter=routeFilter==="todos"||(routeFilter==="peguei"&&stamped)||(routeFilter==="falta"&&!stamped)||(routeFilter==="disponiveis"&&r.status==="carimbando");
+   const matchesSearch=!q||(String(r.numero).includes(q)||r.nome.toLowerCase().includes(q)||r.local.toLowerCase().includes(q));
+   return matchesFilter&&matchesSearch;
+ });
+ const total=ROTA_BIKER.length, stamped=Object.keys(routeStamps).filter(k=>ROTA_BIKER.some(r=>String(r.numero)===k)).length;
+ const pct=Math.round((stamped/total)*100);
+ document.getElementById("routeProgress").textContent=`${stamped} de ${total} carimbos`;
+ document.getElementById("routeProgressPct").textContent=pct+"%";
+ document.getElementById("routeProgressBar").style.width=pct+"%";
+ document.getElementById("routeCount").textContent=`${filtered.length} monumento${filtered.length===1?"":"s"}`;
+ list.innerHTML=filtered.length?filtered.map(r=>{
+   const stamped=!!routeStamps[String(r.numero)];
+   const date=stamped?new Date(routeStamps[String(r.numero)]).toLocaleDateString("pt-BR"):"";
+   return `<article class="route-card ${stamped?"route-stamped":""}">
+     <div class="route-card-icon"><img src="icons/rota-biker-monumento.png" alt="Monumento Rota Biker"></div>
+     <div class="route-card-body"><div class="route-number">ROTA ${String(r.numero).padStart(2,"0")}</div><h3>${escapeHtml(r.nome)}</h3><p>📍 ${escapeHtml(r.local)}</p><span class="route-status route-status-${r.status}">${routeStatusLabel(r.status)}</span>${stamped?`<small class="route-stamp-date">✓ Carimbo registrado em ${date}</small>`:""}</div>
+     <div class="route-card-actions"><a class="ghost-btn" href="${routeMapUrl(r)}" target="_blank" rel="noopener">📍 Mapa</a><button class="stamp-btn ${stamped?"done":""}" onclick="toggleRouteStamp(${r.numero})">${stamped?"✓ Carimbado":"☐ Peguei o carimbo"}</button></div>
+   </article>`;
+ }).join(""):"<div class=\"empty\">Nenhum monumento encontrado.</div>";
+}
+
 
 function money(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
 function saveTrips(){localStorage.setItem(TRIP_KEY,JSON.stringify(trips));if(window.cloudSyncNow) setTimeout(window.cloudSyncNow,150);}
@@ -38,10 +91,11 @@ function updateCalcDefaults(){const b=bikeById(document.getElementById("calcBike
 function useCalcForTrip(){const km=document.getElementById("calcKm").value;const bikeId=document.getElementById("calcBike").value;openTripModal("planejada");document.getElementById("tripKm").value=km;document.getElementById("tripBike").value=bikeId;updateTripEstimate();showScreen("trips");document.getElementById("tripModal").classList.remove("hidden");}
 function nextPlanned(){return trips.filter(t=>t.status==="planejada"&&t.date).sort((a,b)=>a.date.localeCompare(b.date))[0];}
 function renderHome(){const planned=trips.filter(t=>t.status==="planejada"),done=trips.filter(t=>t.status!=="planejada"),km=done.reduce((s,t)=>s+Number(t.km||0),0),spent=done.reduce((s,t)=>s+(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0),0);document.getElementById("totalKm").textContent=km.toLocaleString("pt-BR")+" km";document.getElementById("totalTrips").textContent=done.length;document.getElementById("totalSpent").textContent=money(spent);document.getElementById("plannedTrips").textContent=planned.length;const n=nextPlanned();document.getElementById("nextTrip").innerHTML=n?`<div class="next-highlight"><div class="date">${formatDate(n.date)}</div><h3>${escapeHtml(n.name)}</h3><p>${escapeHtml([n.origin,n.destination].filter(Boolean).join(" → ")||"Rota ainda não informada")}</p></div>`:`<div class="empty">Nenhuma próxima viagem cadastrada ainda. 🗺️</div>`;document.getElementById("recentTrips").innerHTML=done.length?done.slice(0,3).map(tripCard).join(""):`<div class="empty">Ainda não há viagens realizadas.</div>`;}
-function render(){renderHome();renderTrips();renderBikes();populateBikeSelect("calcBike");calculateTrip();document.getElementById("statsKm").textContent=trips.filter(t=>t.status!=="planejada").reduce((s,t)=>s+Number(t.km||0),0).toLocaleString("pt-BR")+" km";document.getElementById("statsTrips").textContent=trips.filter(t=>t.status!=="planejada").length;document.getElementById("statsSpent").textContent=money(trips.filter(t=>t.status!=="planejada").reduce((s,t)=>s+(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0),0));document.getElementById("statsPlanned").textContent=trips.filter(t=>t.status==="planejada").length;}
+function render(){renderHome();renderTrips();renderBikes();renderRoute();populateBikeSelect("calcBike");calculateTrip();document.getElementById("statsKm").textContent=trips.filter(t=>t.status!=="planejada").reduce((s,t)=>s+Number(t.km||0),0).toLocaleString("pt-BR")+" km";document.getElementById("statsTrips").textContent=trips.filter(t=>t.status!=="planejada").length;document.getElementById("statsSpent").textContent=money(trips.filter(t=>t.status!=="planejada").reduce((s,t)=>s+(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0),0));document.getElementById("statsPlanned").textContent=trips.filter(t=>t.status==="planejada").length;}
 function formatDate(d){if(!d)return"--";const [y,m,day]=d.split("-");return`${day}/${m}/${y}`;}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 window.reloadAppData=function(){
+  routeStamps=JSON.parse(localStorage.getItem(ROUTE_KEY)||"{}");
   trips=JSON.parse(localStorage.getItem(TRIP_KEY)||"[]").map(t=>({...t,status:t.status||"realizada",bikeId:t.bikeId||""}));
   bikes=JSON.parse(localStorage.getItem(BIKE_KEY)||"[]");
   render();
@@ -57,7 +111,7 @@ window.addEventListener("load",()=>{
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const registration=await navigator.serviceWorker.register("sw.js");
+      const registration=await navigator.serviceWorker.register("sw.js?v=1.5.1");
       await registration.update();
       document.addEventListener("visibilitychange",()=>{
         if(document.visibilityState==="visible") registration.update().catch(()=>{});

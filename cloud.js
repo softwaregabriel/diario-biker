@@ -1,4 +1,4 @@
-/* Diario Casal na Rota — sincronização V1.2 */
+/* Diario Casal na Rota — sincronização V1.4 */
 (function () {
   const cfg = window.DIARIO_SUPABASE_CONFIG || {};
   const configured = cfg.url && cfg.key && !String(cfg.url).startsWith("COLE_") && !String(cfg.key).startsWith("COLE_");
@@ -53,8 +53,12 @@
   function getLocalBikes() {
     try { return JSON.parse(localStorage.getItem("diario_casal_na_rota_motos_v1") || "[]"); } catch { return []; }
   }
+  function getLocalRouteStamps() {
+    try { return JSON.parse(localStorage.getItem("diario_casal_na_rota_biker_v1") || "{}"); } catch { return {}; }
+  }
   function putLocalTrips(items) { localStorage.setItem("diario_biker_v1", JSON.stringify(items)); }
   function putLocalBikes(items) { localStorage.setItem("diario_casal_na_rota_motos_v1", JSON.stringify(items)); }
+  function putLocalRouteStamps(items) { localStorage.setItem("diario_casal_na_rota_biker_v1", JSON.stringify(items)); }
 
   async function syncNow() {
     if (!client || !session || syncing) return;
@@ -64,6 +68,7 @@
       const uid = session.user.id;
       let localTrips = getLocalTrips();
       let localBikes = getLocalBikes();
+      let localRouteStamps = getLocalRouteStamps();
       const now = new Date().toISOString();
       localTrips = localTrips.map(x => ({ ...x, id: String(x.id), updated_at: x.updated_at || now }));
       localBikes = localBikes.map(x => ({ ...x, id: String(x.id), updated_at: x.updated_at || now }));
@@ -91,12 +96,22 @@
         if (error) throw error;
       }
 
-      const [{ data: remoteTrips, error: tripError }, { data: remoteBikes, error: bikeError }] = await Promise.all([
+      const routeRows = Array.from({length:43}, (_,i) => {
+        const k=String(i+1);
+        return { id: `${uid}:${k}`, user_id: uid, monument_number: i+1, stamped: !!localRouteStamps[k], stamped_at: localRouteStamps[k] || null, updated_at: now };
+      });
+      const { error: routeUpsertError } = await client.from("route_stamps").upsert(routeRows, { onConflict: "id" });
+      // Se a tabela ainda não foi criada no Supabase, o restante da nuvem continua funcionando.
+      if (routeUpsertError) console.warn("Rota Biker ainda não sincronizada na nuvem:", routeUpsertError.message);
+
+      const [{ data: remoteTrips, error: tripError }, { data: remoteBikes, error: bikeError }, { data: remoteRouteStamps, error: routeError }] = await Promise.all([
         client.from("trips").select("*").order("date", { ascending: false }),
-        client.from("bikes").select("*").order("updated_at", { ascending: false })
+        client.from("bikes").select("*").order("updated_at", { ascending: false }),
+        client.from("route_stamps").select("*").order("monument_number", { ascending: true })
       ]);
       if (tripError) throw tripError;
       if (bikeError) throw bikeError;
+      if (routeError) console.warn("Rota Biker ainda não disponível na nuvem:", routeError.message);
 
       const tripMap = new Map(localTrips.map(x => [String(x.id), x]));
       (remoteTrips || []).forEach(r => {
@@ -120,8 +135,13 @@
           });
         }
       });
+      (remoteRouteStamps || []).forEach(r => {
+        const k=String(r.monument_number);
+        if (!(k in localRouteStamps) || (!localRouteStamps[k] && r.stamped)) localRouteStamps[k]=r.stamped_at || (r.stamped ? now : false);
+      });
       putLocalTrips([...tripMap.values()]);
       putLocalBikes([...bikeMap.values()]);
+      putLocalRouteStamps(localRouteStamps);
       if (window.reloadAppData) window.reloadAppData();
       setStatus("☁️ Sincronizado agora", "ok");
     } catch (err) {

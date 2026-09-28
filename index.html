@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
-  <title>Diario Casal na Rota — V1.2</title>
+  <title>Diario Casal na Rota — V1.5</title>
 
 <style id="autoral-splash-css">
 #autoral-splash{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;text-align:center;background:#0b1220;color:#fff;padding:24px;box-sizing:border-box;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
@@ -78,7 +78,7 @@ setTimeout(hide,3500);
       <button id="dcr-sobre-open" type="button" aria-label="Abrir Sobre">ℹ️ Sobre</button>
     </div>
     <div>
-      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.2</span>
+      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.5</span>
       <h1>Suas estradas.<br><span>Suas histórias.</span></h1>
     </div>
     <img class="brand-logo" src="icons/icon-192.png" alt="Diario Casal na Rota">
@@ -96,7 +96,7 @@ setTimeout(hide,3500);
     </section>
     <button class="primary-btn" onclick="openTripModal('realizada')">＋ Registrar viagem</button>
     <section class="quick-grid">
-      <button class="quick-card" onclick="showScreen('trips'); setTripFilter('realizada')"><b>🏍️ Realizadas</b><small>Histórico das aventuras</small></button>
+      <button class="quick-card" onclick="showScreen('trips'); setTripFilter('realizada')"><b>🛣️ Realizadas</b><small>Histórico das aventuras</small></button>
       <button class="quick-card" onclick="showScreen('trips'); setTripFilter('planejada')"><b>🗓️ Próximas</b><small>Viagens que ainda virão</small></button>
       <button class="quick-card" onclick="showScreen('calculator')"><b>⛽ Calcular viagem</b><small>Combustível + pedágios</small></button>
       <button class="quick-card" onclick="showScreen('bikes')"><b>🏍️ Minhas motos</b><small>Atual, vendidas e futuras</small></button>
@@ -147,8 +147,21 @@ setTimeout(hide,3500);
   </main>
 
   <main id="screen-route" class="screen">
-    <div class="page-head"><h2>Rota Biker</h2></div>
-    <div class="route-empty"><div class="big-icon">🏆</div><h3>Suas conquistas começam aqui</h3><p>Em breve vamos registrar monumentos, mirantes, cachoeiras, estradas especiais e outros pontos marcantes das suas viagens.</p></div>
+    <div class="page-head"><div class="route-title"><img src="icons/rota-biker-monumento.png" alt="Rota Biker"><div><h2>Rota Biker</h2><small>Seu passaporte de monumentos</small></div></div></div>
+    <section class="route-progress-card">
+      <div class="route-progress-head"><div><small>CARIMBOS CONQUISTADOS</small><strong id="routeProgress">0 de 43 carimbos</strong></div><b id="routeProgressPct">0%</b></div>
+      <div class="route-progress-track"><span id="routeProgressBar"></span></div>
+      <p>Marque cada monumento assim que pegar o carimbo no local.</p>
+    </section>
+    <div class="route-tabs">
+      <button class="active" data-filter="todos" onclick="setRouteFilter('todos')">Todos</button>
+      <button data-filter="falta" onclick="setRouteFilter('falta')">Faltam</button>
+      <button data-filter="peguei" onclick="setRouteFilter('peguei')">Peguei</button>
+      <button data-filter="disponiveis" onclick="setRouteFilter('disponiveis')">Carimbando</button>
+    </div>
+    <input class="route-search" type="search" placeholder="🔎 Buscar monumento, cidade ou número..." oninput="setRouteSearch(this.value)">
+    <div class="route-list-head"><span id="routeCount">43 monumentos</span><small>Fonte: lista atual da Rota Biker</small></div>
+    <div id="routeList" class="route-list"></div>
   </main>
 
   <main id="screen-stats" class="screen">
@@ -166,6 +179,7 @@ setTimeout(hide,3500);
     <button class="nav-item" data-screen="trips" onclick="showScreen('trips')"><span>🛣️</span><small>Viagens</small></button>
     <button class="nav-add" onclick="openTripModal('realizada')">＋</button>
     <button class="nav-item" data-screen="calculator" onclick="showScreen('calculator')"><span>⛽</span><small>Gastos</small></button>
+    <button class="nav-item" data-screen="route" onclick="showScreen('route')"><span class="route-nav-icon"><img src="icons/rota-biker-monumento.png" alt="Rota Biker"></span><small>Rota Biker</small></button>
     <button class="nav-item" data-screen="bikes" onclick="showScreen('bikes')"><span>🏍️</span><small>Motos</small></button>
   </nav>
 </div>
