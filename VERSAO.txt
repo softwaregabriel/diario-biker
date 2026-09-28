@@ -1,2 +1,3 @@
-DIÁRIO CASAL NA ROTA — V1.5.8
-Carimbos pendentes/concluídos + ícone de abertura com recorte transparente e suave.
+Diário Casal na Rota — V1.5.9
+Abertura renovada: “Diário” + “Casal na Rota”, logo com recorte circular limpo e antialiasado.
+Desenvolvido por Gabriel Ramos.

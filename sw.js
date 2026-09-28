@@ -1,6 +1,6 @@
-// Diario Casal na Rota — atualização automática V1.5
-const CACHE="casal-na-rota-v1.5.8-20260928";
-const ASSETS=["./","./index.html","./style.css","./app.js","./cloud.js","./supabase-config.js","./manifest.json","./icons/icon-192.png","./icons/icon-512.png","./icons/apple-touch-icon.png","./icons/rota-biker-monumento.png"];
+// Diario Casal na Rota — atualização automática V1.5.9
+const CACHE="casal-na-rota-v1.5.9-20260928";
+const ASSETS=["./","./index.html","./style.css","./app.js","./cloud.js","./supabase-config.js","./manifest.json","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-1024.png","./icons/apple-touch-icon.png","./icons/rota-biker-monumento.png"];
 
 self.addEventListener("install", event => {
   event.waitUntil(

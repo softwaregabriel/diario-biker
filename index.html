@@ -13,14 +13,15 @@
   <title>Diario Casal na Rota — V1.5</title>
 
 <style id="autoral-splash-css">
-#autoral-splash{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;text-align:center;background:#0b1220;color:#fff;padding:24px;box-sizing:border-box;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+#autoral-splash{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;text-align:center;background:#0b0c0e;color:#fff;padding:24px;box-sizing:border-box;opacity:1;visibility:visible;transition:opacity .5s ease,visibility .5s ease}
 #autoral-splash.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
-#autoral-splash .splash-inner{max-width:360px;animation:autoralSplashIn .65s ease both}
-#autoral-splash .splash-logo{width:min(170px,46vw);height:min(170px,46vw);object-fit:contain;margin:0 auto 18px;border-radius:0}
-#autoral-splash .splash-title{margin:0;font-size:clamp(24px,7vw,34px);line-height:1.1;font-weight:800}
-#autoral-splash .splash-phrase{margin:14px auto 10px;max-width:330px;font-size:16px;line-height:1.45;opacity:.9}
-#autoral-splash .splash-author{margin:12px 0 0;font-size:13px;opacity:.72}
-@keyframes autoralSplashIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+#autoral-splash .splash-inner{width:min(360px,88vw);animation:autoralSplashIn .7s cubic-bezier(.2,.75,.25,1) both}
+#autoral-splash .splash-logo{width:min(164px,45vw);height:min(164px,45vw);object-fit:contain;display:block;margin:0 auto 22px;filter:drop-shadow(0 12px 28px rgba(0,0,0,.42))}
+#autoral-splash .splash-title{margin:0;font-size:clamp(34px,10vw,48px);line-height:1;font-weight:900;letter-spacing:-1.2px}
+#autoral-splash .splash-title-sub{display:block;margin-top:7px;font-size:clamp(20px,6vw,27px);line-height:1.08;font-weight:700;letter-spacing:.2px;color:#b8bdc5}
+#autoral-splash .splash-phrase{margin:22px auto 10px;max-width:330px;font-size:15px;line-height:1.45;opacity:.86}
+#autoral-splash .splash-author{margin:12px 0 0;font-size:12px;opacity:.62}
+@keyframes autoralSplashIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){#autoral-splash .splash-inner{animation:none}#autoral-splash{transition:none}}
 </style>
 
@@ -45,7 +46,7 @@
 <div id="autoral-splash" aria-label="Diário Casal na Rota">
 <div class="splash-inner">
 <img class="splash-logo" src="./icons/icon-512.png" alt="Diário Casal na Rota">
-<h1 class="splash-title">Diário Casal na Rota</h1>
+<h1 class="splash-title">Diário<span class="splash-title-sub">Casal na Rota</span></h1>
 <p class="splash-phrase">“Enquanto houver estrada, teremos histórias para viver juntos.”</p>
 <p class="splash-author">Desenvolvido por Gabriel Ramos · © 2026</p>
 </div>
@@ -64,20 +65,13 @@ setTimeout(hide,3500);
 })();
 </script>
 
-<div id="splash" aria-label="Abrindo Diário Casal na Rota">
-  <div class="splash-inner">
-    <img src="icons/icon-192.png" alt="Diário Casal na Rota">
-    <div class="splash-title">DIÁRIO CASAL NA ROTA</div>
-    <div class="splash-subtitle">Suas estradas. Suas histórias.</div>
-  </div>
-</div>
 <div id="app">
   <header class="topbar">
     <div id="dcr-top-actions">
       <button class="cloud-button" onclick="openCloudModal()">☁️ <span id="cloudHeaderStatus">Nuvem</span></button>
     </div>
     <div>
-      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.5.8</span>
+      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.5.9</span>
       <h1>Suas estradas.<br><span>Suas histórias.</span></h1>
     </div>
     <img class="brand-logo" src="icons/icon-192.png" alt="Diario Casal na Rota">
