@@ -7,8 +7,8 @@ let bikeFilter="comigo";
 let tripStatus="realizada";
 
 function money(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
-function saveTrips(){localStorage.setItem(TRIP_KEY,JSON.stringify(trips));}
-function saveBikes(){localStorage.setItem(BIKE_KEY,JSON.stringify(bikes));}
+function saveTrips(){localStorage.setItem(TRIP_KEY,JSON.stringify(trips));if(window.cloudSyncNow) setTimeout(window.cloudSyncNow,150);}
+function saveBikes(){localStorage.setItem(BIKE_KEY,JSON.stringify(bikes));if(window.cloudSyncNow) setTimeout(window.cloudSyncNow,150);}
 function showScreen(name){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById("screen-"+name).classList.add("active");document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.screen===name));window.scrollTo({top:0,behavior:"smooth"});render();}
 function closeModal(id){document.getElementById(id).classList.add("hidden");}
 function openTripModal(status="realizada"){
@@ -19,9 +19,9 @@ function setTripStatus(status){tripStatus=status;document.getElementById("tripSt
 function addExpense(){const row=document.createElement("div");row.className="expense-row";row.innerHTML=`<input class="expense-name" placeholder="Ex.: Combustível"><input class="expense-value" type="number" min="0" step="0.01" placeholder="R$"><button type="button" onclick="this.parentElement.remove()">×</button>`;document.getElementById("expenses").appendChild(row);}
 function openBikeModal(){document.getElementById("bikeForm").reset();document.getElementById("bikeModal").classList.remove("hidden");}
 
-document.getElementById("tripForm").addEventListener("submit",e=>{e.preventDefault();const expenses=[...document.querySelectorAll(".expense-row")].map(r=>({name:r.querySelector(".expense-name").value.trim()||"Outros",value:Number(r.querySelector(".expense-value").value||0)})).filter(x=>x.value>0);const bikeId=document.getElementById("tripBike").value;trips.unshift({id:Date.now(),name:document.getElementById("tripName").value.trim(),date:document.getElementById("tripDate").value,km:Number(document.getElementById("tripKm").value||0),origin:document.getElementById("tripOrigin").value.trim(),destination:document.getElementById("tripDestination").value.trim(),notes:document.getElementById("tripNotes").value.trim(),expenses,status:tripStatus,bikeId});saveTrips();closeModal("tripModal");tripFilter=tripStatus;showScreen("trips");});
+document.getElementById("tripForm").addEventListener("submit",e=>{e.preventDefault();const expenses=[...document.querySelectorAll(".expense-row")].map(r=>({name:r.querySelector(".expense-name").value.trim()||"Outros",value:Number(r.querySelector(".expense-value").value||0)})).filter(x=>x.value>0);const bikeId=document.getElementById("tripBike").value;trips.unshift({id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),name:document.getElementById("tripName").value.trim(),date:document.getElementById("tripDate").value,km:Number(document.getElementById("tripKm").value||0),origin:document.getElementById("tripOrigin").value.trim(),destination:document.getElementById("tripDestination").value.trim(),notes:document.getElementById("tripNotes").value.trim(),expenses,status:tripStatus,bikeId});saveTrips();closeModal("tripModal");tripFilter=tripStatus;showScreen("trips");});
 
-document.getElementById("bikeForm").addEventListener("submit",e=>{e.preventDefault();bikes.unshift({id:Date.now(),name:document.getElementById("bikeName").value.trim(),year:document.getElementById("bikeYear").value.trim(),consumption:Number(document.getElementById("bikeConsumption").value||0),status:document.getElementById("bikeStatus").value,acquired:document.getElementById("bikeAcquired").value,sold:document.getElementById("bikeSold").value,purchase:Number(document.getElementById("bikePurchase").value||0),sale:Number(document.getElementById("bikeSale").value||0),notes:document.getElementById("bikeNotes").value.trim()});saveBikes();closeModal("bikeModal");render();});
+document.getElementById("bikeForm").addEventListener("submit",e=>{e.preventDefault();bikes.unshift({id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),name:document.getElementById("bikeName").value.trim(),year:document.getElementById("bikeYear").value.trim(),consumption:Number(document.getElementById("bikeConsumption").value||0),status:document.getElementById("bikeStatus").value,acquired:document.getElementById("bikeAcquired").value,sold:document.getElementById("bikeSold").value,purchase:Number(document.getElementById("bikePurchase").value||0),sale:Number(document.getElementById("bikeSale").value||0),notes:document.getElementById("bikeNotes").value.trim()});saveBikes();closeModal("bikeModal");render();});
 
 document.getElementById("tripBike").addEventListener("change",updateTripEstimate);
 document.getElementById("tripKm").addEventListener("input",updateTripEstimate);
@@ -41,5 +41,10 @@ function renderHome(){const planned=trips.filter(t=>t.status==="planejada"),done
 function render(){renderHome();renderTrips();renderBikes();populateBikeSelect("calcBike");calculateTrip();document.getElementById("statsKm").textContent=trips.filter(t=>t.status!=="planejada").reduce((s,t)=>s+Number(t.km||0),0).toLocaleString("pt-BR")+" km";document.getElementById("statsTrips").textContent=trips.filter(t=>t.status!=="planejada").length;document.getElementById("statsSpent").textContent=money(trips.filter(t=>t.status!=="planejada").reduce((s,t)=>s+(t.expenses||[]).reduce((a,e)=>a+Number(e.value||0),0),0));document.getElementById("statsPlanned").textContent=trips.filter(t=>t.status==="planejada").length;}
 function formatDate(d){if(!d)return"--";const [y,m,day]=d.split("-");return`${day}/${m}/${y}`;}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+window.reloadAppData=function(){
+  trips=JSON.parse(localStorage.getItem(TRIP_KEY)||"[]").map(t=>({...t,status:t.status||"realizada",bikeId:t.bikeId||""}));
+  bikes=JSON.parse(localStorage.getItem(BIKE_KEY)||"[]");
+  render();
+};
 render();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));

@@ -10,13 +10,14 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
-  <title>Diario Casal na Rota — V1.1</title>
+  <title>Diario Casal na Rota — V1.2</title>
 </head>
 <body>
 <div id="app">
   <header class="topbar">
+    <button class="cloud-button" onclick="openCloudModal()">☁️ <span id="cloudHeaderStatus">Nuvem</span></button>
     <div>
-      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.1</span>
+      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.2</span>
       <h1>Suas estradas.<br><span>Suas histórias.</span></h1>
     </div>
     <img class="brand-logo" src="icons/icon-192.png" alt="Diario Casal na Rota">
@@ -139,6 +140,27 @@
     </form>
   </div>
 </div>
+<div id="cloudModal" class="modal hidden">
+  <div class="modal-box cloud-modal-box">
+    <div class="modal-head"><div><h2>☁️ Sincronização</h2><small>Use a mesma conta nos dois celulares</small></div><button onclick="closeCloudModal()">×</button></div>
+    <div id="cloudStatus" class="cloud-status">Verificando...</div>
+    <div id="cloudAuthBox">
+      <label>E-mail<input id="cloudEmail" type="email" autocomplete="email" placeholder="seuemail@email.com"></label>
+      <label>Senha<input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Mínimo de 6 caracteres"></label>
+      <div class="two-cols cloud-actions"><button class="primary-btn" type="button" onclick="cloudSignIn()">Entrar</button><button class="ghost-btn" type="button" onclick="cloudSignUp()">Criar conta</button></div>
+      <p id="cloudMessage" class="cloud-message"></p>
+    </div>
+    <div id="cloudLoggedBox" class="hidden">
+      <p>Conta conectada:</p><strong id="cloudUser"></strong>
+      <div class="cloud-actions"><button class="primary-btn" type="button" onclick="cloudSyncNow()">☁️ Sincronizar agora</button><button class="ghost-btn" type="button" onclick="cloudSignOut()">Sair</button></div>
+      <p id="cloudMessage" class="cloud-message"></p>
+    </div>
+    <div class="tip">Use a mesma conta no seu celular e no celular da outra pessoa. Assim os dados ficam no mesmo espaço na nuvem.</div>
+  </div>
+</div>
+<script src="supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
+<script src="cloud.js"></script>
 </body>
 </html>

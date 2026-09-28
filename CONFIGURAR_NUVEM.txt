@@ -1,0 +1,31 @@
+DIARIO CASAL NA ROTA — V1.2 NUVEM
+
+Esta versão permite usar a MESMA CONTA nos dois celulares. Assim, viagens e motos cadastradas em um aparelho aparecem no outro.
+
+PASSO 1 — CRIAR O BANCO GRATUITO
+1. Entre em https://supabase.com/
+2. Crie uma conta e um projeto novo.
+3. Abra o projeto e vá ao SQL Editor.
+4. Abra o arquivo supabase.sql deste pacote, copie todo o conteúdo e execute.
+
+PASSO 2 — PEGAR AS CHAVES
+1. No Supabase, abra Project Settings > API.
+2. Copie a Project URL.
+3. Copie a Publishable key (ou a chave anon pública, se for a que aparecer no seu painel).
+4. Abra supabase-config.js.
+5. Cole os dois valores nos campos url e key.
+
+NUNCA coloque a service_role key no aplicativo.
+
+PASSO 3 — PUBLICAR
+Envie todos os arquivos desta pasta para o repositório diario-biker do GitHub, substituindo a versão anterior.
+
+PASSO 4 — USAR NOS DOIS CELULARES
+1. Abra o app.
+2. Toque em “☁️ Nuvem”.
+3. Crie a conta uma única vez.
+4. No outro celular, abra o mesmo app e entre com o MESMO e-mail e senha.
+5. Os dados ficam vinculados à conta e são sincronizados.
+
+OBSERVAÇÃO
+O app continua guardando uma cópia local para funcionar sem internet. Quando voltar a ter conexão, ele sincroniza.
