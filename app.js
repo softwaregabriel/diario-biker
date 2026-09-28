@@ -52,8 +52,8 @@ function renderRoute(){
    const date=stamped?new Date(routeStamps[String(r.numero)]).toLocaleDateString("pt-BR"):"";
    return `<article class="route-card ${stamped?"route-stamped":""}">
      <div class="route-card-icon"><img src="icons/rota-biker-monumento.png" alt="Monumento Rota Biker"></div>
-     <div class="route-card-body"><div class="route-number">ROTA ${String(r.numero).padStart(2,"0")}</div><h3>${escapeHtml(r.nome)}</h3><p>📍 ${escapeHtml(r.local)}</p><span class="route-status route-status-${r.status}">${routeStatusLabel(r.status)}</span>${stamped?`<small class="route-stamp-date">✓ Carimbo registrado em ${date}</small>`:""}</div>
-     <div class="route-card-actions"><a class="ghost-btn" href="${routeMapUrl(r)}" target="_blank" rel="noopener">📍 Mapa</a><button class="stamp-btn ${stamped?"done":""}" onclick="toggleRouteStamp(${r.numero})">${stamped?"✓ Carimbado":"☐ Peguei o carimbo"}</button></div>
+     <div class="route-card-body"><div class="route-number">ROTA ${String(r.numero).padStart(2,"0")}</div><h3>${escapeHtml(r.nome)}</h3><p>📍 ${escapeHtml(r.local)}</p><span class="route-status route-status-${r.status}">${routeStatusLabel(r.status)}</span>${stamped?`<small class="route-stamp-date">✓ Carimbo concluído em ${date}</small>`:`<small class="route-stamp-pending">⏳ Carimbo pendente</small>`}</div>
+     <div class="route-card-actions"><a class="ghost-btn" href="${routeMapUrl(r)}" target="_blank" rel="noopener">📍 Mapa</a><button class="stamp-btn ${stamped?"done":"pending"}" onclick="toggleRouteStamp(${r.numero})">${stamped?"✓ Carimbo concluído":"⏳ Carimbo pendente"}</button></div>
    </article>`;
  }).join(""):"<div class=\"empty\">Nenhum monumento encontrado.</div>";
 }
