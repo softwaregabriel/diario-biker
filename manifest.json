@@ -1,0 +1,10 @@
+{
+  "name":"Diário Biker",
+  "short_name":"Diário Biker",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#0b0c0e",
+  "theme_color":"#111111",
+  "lang":"pt-BR",
+  "icons":[]
+}
