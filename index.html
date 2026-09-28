@@ -25,6 +25,18 @@
 </style>
 
 <meta name="author" content="Gabriel Ramos">
+<style id="dcr-sobre-css">
+#dcr-sobre-overlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.58);padding:18px;box-sizing:border-box}
+#dcr-sobre-overlay.open{display:flex}
+#dcr-sobre-card{width:min(520px,100%);max-height:88vh;overflow:auto;background:#fff;color:#172033;border-radius:22px;padding:24px;box-sizing:border-box;box-shadow:0 18px 60px rgba(0,0,0,.28)}
+#dcr-sobre-card h2{margin:0 0 8px;font-size:24px}
+#dcr-sobre-card .frase{font-style:italic;line-height:1.5;margin:10px 0 18px}
+#dcr-sobre-card .texto{line-height:1.55;margin:0 0 18px}
+#dcr-sobre-card .meta{display:grid;gap:8px;margin:16px 0}
+#dcr-sobre-card .fechar{width:100%;border:0;border-radius:12px;padding:12px 16px;font-size:16px;font-weight:700;cursor:pointer}
+#dcr-sobre-open{position:fixed;right:18px;bottom:88px;z-index:9000;border:0;border-radius:999px;padding:11px 15px;font-size:14px;font-weight:700;box-shadow:0 5px 18px rgba(0,0,0,.18);cursor:pointer}
+@media(max-width:600px){#dcr-sobre-card{padding:20px;border-radius:18px}#dcr-sobre-open{right:14px;bottom:78px}}
+</style>
 </head>
 <body>
 
@@ -206,5 +218,21 @@ setTimeout(hide,3500);
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
 <script src="cloud.js"></script>
+<button id="dcr-sobre-open" type="button" aria-label="Abrir Sobre">ℹ️ Sobre</button>
+<div id="dcr-sobre-overlay" aria-hidden="true">
+<section id="dcr-sobre-card" role="dialog" aria-modal="true" aria-labelledby="dcr-sobre-title">
+<h2 id="dcr-sobre-title">Sobre o Diário Casal na Rota</h2>
+<p class="frase">“Enquanto houver estrada, teremos histórias para viver juntos.”</p>
+<p class="texto">Um espaço criado para registrar nossas viagens, nossas motos, os lugares que conhecemos e, principalmente, as histórias que construímos juntos pela estrada.</p>
+<div class="meta">
+<div><strong>Desenvolvido por:</strong> Gabriel Ramos</div>
+<div><strong>Versão:</strong> 1.4</div>
+<div><strong>Ano:</strong> 2026</div>
+<div><strong>Sincronização:</strong> Supabase</div>
+</div>
+<button class="fechar" id="dcr-sobre-close" type="button">Fechar</button>
+</section>
+</div>
+<script id="dcr-sobre-js">(function(){var o=document.getElementById('dcr-sobre-overlay'),a=document.getElementById('dcr-sobre-open'),c=document.getElementById('dcr-sobre-close');if(!o||!a||!c)return;function s(){o.classList.add('open');o.setAttribute('aria-hidden','false')}function h(){o.classList.remove('open');o.setAttribute('aria-hidden','true')}a.addEventListener('click',s);c.addEventListener('click',h);o.addEventListener('click',function(e){if(e.target===o)h()});document.addEventListener('keydown',function(e){if(e.key==='Escape')h()})})();</script>
 </body>
 </html>
