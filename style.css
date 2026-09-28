@@ -31,3 +31,13 @@
  .bottom-nav .nav-item small{font-size:8px}
  .bottom-nav .nav-add{width:44px;height:44px;flex-basis:44px}
 }
+
+/* V1.5.6 — Motos fica dentro do Início; Sobre ganha uma posição discreta e autoral */
+.about-home-wrap{display:flex;justify-content:center;padding:26px 0 10px}
+.about-home-link{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;font-weight:700;padding:8px 12px;border:1px solid var(--border);background:rgba(255,255,255,.025);border-radius:999px}
+.about-home-link span{color:var(--accent);font-size:12px}
+.about-home-link:active{transform:scale(.98)}
+@media(max-width:760px){
+  .bottom-nav .nav-item{font-size:inherit}
+  .bottom-nav .nav-item small{font-size:9px}
+}

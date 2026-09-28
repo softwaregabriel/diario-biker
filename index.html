@@ -75,10 +75,9 @@ setTimeout(hide,3500);
   <header class="topbar">
     <div id="dcr-top-actions">
       <button class="cloud-button" onclick="openCloudModal()">☁️ <span id="cloudHeaderStatus">Nuvem</span></button>
-      <button id="dcr-sobre-open" type="button" aria-label="Abrir Sobre">ℹ️ Sobre</button>
     </div>
     <div>
-      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.5</span>
+      <span class="eyebrow">DIARIO CASAL NA ROTA • V1.5.6</span>
       <h1>Suas estradas.<br><span>Suas histórias.</span></h1>
     </div>
     <img class="brand-logo" src="icons/icon-192.png" alt="Diario Casal na Rota">
@@ -105,6 +104,11 @@ setTimeout(hide,3500);
     <div id="nextTrip"></div>
     <section class="section-head"><h2>Últimas realizadas</h2><button onclick="showScreen('trips'); setTripFilter('realizada')">Ver todas</button></section>
     <div id="recentTrips" class="trip-list"></div>
+    <div class="about-home-wrap">
+      <button id="dcr-sobre-open" class="about-home-link" type="button" aria-label="Sobre o Diário Casal na Rota">
+        <span>✦</span> Sobre o Diário Casal na Rota
+      </button>
+    </div>
   </main>
 
   <main id="screen-trips" class="screen">
@@ -180,7 +184,6 @@ setTimeout(hide,3500);
     <button class="nav-add" onclick="openTripModal('realizada')">＋</button>
     <button class="nav-item" data-screen="calculator" onclick="showScreen('calculator')"><span>⛽</span><small>Gastos</small></button>
     <button class="nav-item" data-screen="route" onclick="showScreen('route')"><span class="route-nav-icon"><img src="icons/rota-biker-monumento.png" alt="Rota Biker"></span><small>Rota Biker</small></button>
-    <button class="nav-item" data-screen="bikes" onclick="showScreen('bikes')"><span>🏍️</span><small>Motos</small></button>
   </nav>
 </div>
 
@@ -244,7 +247,7 @@ setTimeout(hide,3500);
 <p class="texto">Um espaço criado para registrar nossas viagens, nossas motos, os lugares que conhecemos e, principalmente, as histórias que construímos juntos pela estrada.</p>
 <div class="meta">
 <div><strong>Desenvolvido por:</strong> Gabriel Ramos</div>
-<div><strong>Versão:</strong> 1.4</div>
+<div><strong>Versão:</strong> 1.5.6</div>
 <div><strong>Ano:</strong> 2026</div>
 <div><strong>Sincronização:</strong> Supabase</div>
 </div>

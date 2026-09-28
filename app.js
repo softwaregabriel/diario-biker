@@ -107,14 +107,20 @@ window.addEventListener("load",()=>{
   setTimeout(()=>document.getElementById("splash")?.classList.add("hide"),650);
 });
 
-// PWA: verifica uma versão nova sempre que o app abre/volta para a tela.
+// PWA V1.5.6: procura atualizações ao abrir e ao voltar para o app.
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
-      const registration=await navigator.serviceWorker.register("sw.js?v=1.5.1");
+      const registration=await navigator.serviceWorker.register("sw.js?v=1.5.6",{updateViaCache:"none"});
       await registration.update();
       document.addEventListener("visibilitychange",()=>{
         if(document.visibilityState==="visible") registration.update().catch(()=>{});
+      });
+      navigator.serviceWorker.addEventListener("controllerchange",()=>{
+        if(!sessionStorage.getItem("dcr-sw-reloaded-v156")){
+          sessionStorage.setItem("dcr-sw-reloaded-v156","1");
+          window.location.reload();
+        }
       });
     }catch(e){}
   });

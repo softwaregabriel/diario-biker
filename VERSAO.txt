@@ -1,6 +1,9 @@
-Diário Casal na Rota — V1.5.4
+Diário Casal na Rota — V1.5.6
 Desenvolvido por Gabriel Ramos
 © 2026
 Rota Biker: aba, cabeçalho e cards com ícone do monumento.
 Ajuste: Realizadas usa ícone de estrada.
-Cache forçado: V1.5.4
+Ajuste: Motos removida da barra inferior e acessível pelo card no Início.
+Ajuste: área Sobre movida para um acesso discreto no final da tela Início.
+Ajuste: atualização do PWA reforçada para detectar novas versões automaticamente.
+Cache forçado: V1.5.6
