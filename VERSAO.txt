@@ -1,3 +1,2 @@
-Diário Casal na Rota — V1.5.9
-Abertura renovada: “Diário” + “Casal na Rota”, logo com recorte circular limpo e antialiasado.
-Desenvolvido por Gabriel Ramos.
+Diário Casal na Rota — V1.5.10
+Logo de abertura com recorte circular limpo e “Casal na Rota” em laranja.
